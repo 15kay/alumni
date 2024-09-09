@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Interaction - Alumni Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js"></script>
+</head>
+<body>
+    <header>
+        <h1>User Interaction</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+           
+                <li><a href="joblistings.html">Job Listings</a></li>
+                <li><a href="interaction.html">User Interaction</a></li>
+                <li><a href="socialplatform.html">Social Platform</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="chat-section">
+            <h2>Alumni Chat Room</h2>
+            <div id="chat-box" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll;">
+                <!-- Chat messages will appear here -->
+            </div>
+            
+            <input type="text" id="message-input" placeholder="Type your message..." style="width: 80%;" />
+            <button id="send-button">Send</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Alumni Portal. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            databaseURL: "your-database-url",
+            projectId: "your-project-id",
+            storageBucket: "your-storage-bucket",
+            messagingSenderId: "your-messaging-sender-id",
+            appId: "your-app-id"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Chat functionality
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+
+        // Listen for new messages
+        db.ref('messages').on('child_added', function(snapshot) {
+            const message = snapshot.val();
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message.user + ": " + message.text;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll to the bottom
+        });
+
+        // Send a new message
+        sendButton.addEventListener('click', function() {
+            const message = messageInput.value;
+            db.ref('messages').push({
+                user: "User1", // Replace with actual user ID/name
+                text: message
+            });
+            messageInput.value = ''; // Clear the input
+        });
+    </script>
+</body>
+</html>
